@@ -1,9 +1,13 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
-// BASE_URL configured for React Native local bridge over Wi-Fi (Expo network)
-// Depending on whether you're using an Android Emulator or Physical Device.
-const BASE_URL = 'http://192.168.1.13:5000/api';
+const configuredBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL?.trim();
+
+const fallbackBaseUrl =
+  Platform.OS === 'android' ? 'http://10.0.2.2:5000/api' : 'http://localhost:5000/api';
+
+const BASE_URL = (configuredBaseUrl || fallbackBaseUrl).replace(/\/$/, '');
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
@@ -14,6 +18,10 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   async (config) => {
+    if (!BASE_URL) {
+      throw new Error('Missing API base URL. Set EXPO_PUBLIC_API_BASE_URL.');
+    }
+
     const token = await AsyncStorage.getItem('userToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

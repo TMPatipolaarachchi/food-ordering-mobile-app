@@ -19,7 +19,10 @@ export default function RegisterScreen({ navigation }) {
         navigation.replace('Home');
       }
     } catch (error) {
-      Alert.alert('Error', error.response?.data?.message || 'Registration failed. Please check network connection.');
+      Alert.alert(
+        'Error',
+        error.response?.data?.message || error.message || 'Registration failed. Please check the backend URL.'
+      );
     }
   };
 

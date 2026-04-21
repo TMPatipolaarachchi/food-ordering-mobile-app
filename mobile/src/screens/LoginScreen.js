@@ -18,7 +18,10 @@ export default function LoginScreen({ navigation }) {
         navigation.replace('Home');
       }
     } catch (error) {
-      Alert.alert('Error', error.response?.data?.message || 'Login failed. Please check network connection.');
+      Alert.alert(
+        'Error',
+        error.response?.data?.message || error.message || 'Login failed. Please check the backend URL.'
+      );
     }
   };
 
