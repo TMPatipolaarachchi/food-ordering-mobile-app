@@ -2,7 +2,27 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
-const configuredBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL?.trim();
+const normalizeApiBaseUrl = (value) => {
+  if (!value) return '';
+
+  let url = value.trim();
+  if (!url) return '';
+
+  // Prevent relative URLs in web builds when protocol is omitted.
+  if (!/^https?:\/\//i.test(url)) {
+    url = `https://${url}`;
+  }
+
+  url = url.replace(/\/$/, '');
+
+  if (!url.endsWith('/api')) {
+    url = `${url}/api`;
+  }
+
+  return url;
+};
+
+const configuredBaseUrl = normalizeApiBaseUrl(process.env.EXPO_PUBLIC_API_BASE_URL);
 
 const fallbackBaseUrl =
   Platform.OS === 'android' ? 'http://10.0.2.2:5000/api' : 'http://localhost:5000/api';
