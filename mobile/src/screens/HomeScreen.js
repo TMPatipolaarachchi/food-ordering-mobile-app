@@ -36,8 +36,9 @@ export default function HomeScreen({ navigation }) {
 
   const getFullImageUrl = (path) => {
     if (!path) return null;
-    if (path.startsWith('http') || path.startsWith('file://')) return path;
-    return `${apiClient.defaults.baseURL.replace('/api', '')}${path}`;
+    const normalizedPath = String(path).trim();
+    if (normalizedPath.startsWith('http') || normalizedPath.startsWith('file://')) return encodeURI(normalizedPath);
+    return encodeURI(`${apiClient.defaults.baseURL.replace('/api', '')}${normalizedPath.startsWith('/') ? '' : '/'}${normalizedPath}`);
   };
 
   return (

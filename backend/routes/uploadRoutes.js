@@ -8,16 +8,29 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/');
     },
     filename(req, file, cb) {
-        cb(null, `${file.originalname.split('.')[0]}-${Date.now()}${path.extname(file.originalname)}`);
+        const originalName = path.basename(file.originalname, path.extname(file.originalname));
+        const fileExt = path.extname(file.originalname).toLowerCase();
+        const mimeExt = file.mimetype === 'image/jpeg' ? '.jpg' : file.mimetype === 'image/png' ? '.png' : file.mimetype === 'image/webp' ? '.webp' : file.mimetype === 'image/gif' ? '.gif' : '';
+        const extension = fileExt || mimeExt || '.jpg';
+        cb(null, `${originalName}-${Date.now()}${extension}`);
     }
 });
 
 function checkFileType(file, cb) {
-    const filetypes = /jpg|jpeg|png/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+    const allowedMimeTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/webp',
+        'image/gif',
+        'image/heic',
+        'image/heif',
+    ];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.heic', '.heif'];
+    const extname = allowedExtensions.includes(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedMimeTypes.includes(file.mimetype);
 
-    if (extname && mimetype) {
+    if (mimetype) {
         return cb(null, true);
     } else {
         cb(new Error('Only images are allowed (jpg, jpeg, png)'));
@@ -35,7 +48,9 @@ router.post('/', upload.single('image'), (req, res) => {
     if(!req.file) {
         res.status(400).send('No file uploaded');
     } else {
-        res.send(`/${req.file.path.replace(/\\/g, '/')}`);
+        const imagePath = `/${req.file.path.replace(/\\/g, '/')}`;
+        const imageUrl = `${req.protocol}://${req.get('host')}${imagePath}`;
+        res.json({ imagePath, imageUrl });
     }
 });
 

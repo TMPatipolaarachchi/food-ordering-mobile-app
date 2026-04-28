@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, FlatList, Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiClient from '../api/apiClient';
 import { screenPadding, ui } from '../theme/ui';
 
@@ -28,7 +29,7 @@ export default function AdminFoodScreen({ route }) {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.5,
@@ -41,19 +42,46 @@ export default function AdminFoodScreen({ route }) {
   const uploadImage = async (uri) => {
     if (!uri || uri.startsWith('http')) return uri;
     const formData = new FormData();
-    const filename = uri.split('/').pop();
+    const filename = uri.split('/').pop() || `upload-${Date.now()}.jpg`;
     const match = /(\.\w+)$/.exec(filename);
-    const type = match ? `image/${match[1].replace('.', '')}` : 'image';
+    const ext = (match?.[1] || '').replace('.', '').toLowerCase();
+    const type = ext === 'jpg' ? 'image/jpeg' : ext ? `image/${ext}` : 'image/jpeg';
 
-    formData.append('image', { uri, name: filename, type });
+    if (Platform.OS === 'web') {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      formData.append('image', blob, filename);
+    } else {
+      formData.append('image', { uri, name: filename, type });
+    }
 
     try {
-      const { data } = await apiClient.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await fetch(`${apiClient.defaults.baseURL}/upload`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
-      return data;
+
+      const responseText = await response.text();
+      if (!response.ok) {
+        console.log('Food upload failed:', response.status, responseText);
+        Alert.alert('Upload Failed', responseText || `Server returned ${response.status}`);
+        return null;
+      }
+
+      const trimmedText = responseText.trim();
+      try {
+        const parsed = JSON.parse(trimmedText);
+        return parsed.imageUrl || parsed.imagePath || trimmedText;
+      } catch {
+        return trimmedText;
+      }
     } catch (error) {
-      Alert.alert('Upload Failed', 'Could not save image to server.');
+      console.log('Food upload failed:', error?.response?.status, error?.response?.data || error?.message);
+      Alert.alert('Upload Failed', error?.response?.data?.message || 'Could not save image to server.');
       return null;
     }
   };
@@ -104,8 +132,9 @@ export default function AdminFoodScreen({ route }) {
 
   const getFullImageUrl = (path) => {
     if (!path) return null;
-    if (path.startsWith('http') || path.startsWith('file://')) return path;
-    return apiClient.defaults.baseURL.replace('/api', '') + path;
+    const normalizedPath = String(path).trim();
+    if (normalizedPath.startsWith('http') || normalizedPath.startsWith('file://')) return encodeURI(normalizedPath);
+    return encodeURI(`${apiClient.defaults.baseURL.replace('/api', '')}${normalizedPath.startsWith('/') ? '' : '/'}${normalizedPath}`);
   };
 
   return (
