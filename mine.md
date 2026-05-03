@@ -385,42 +385,58 @@ Student Name: <Your Name>
 
 Module: SE2020
 
-Project Title: <Your Project Title>
+Project Title: Food Ordering Mobile Application
 
 Project Type: MERN / Full Stack Web Application
 
 ### Statement of individual work
-I certify that this project and all deliverables were completed solely by me and that I have not received unauthorized assistance. All source code is committed to the GitHub repository listed in the README.txt.
+I certify that this project and all deliverables were completed solely by me and that I have not received unauthorized assistance. All source code is committed to the GitHub repository at https://github.com/TMPatipolaarachchi/food-ordering-mobile-app.
 
 ### Responsibilities completed (detailed)
 - Frontend development:
-	- Built user interfaces using React
-	- Implemented client-side routing and state management
-	- Integrated forms for registration/login and item management
-	- Implemented responsive UI and asset handling
+	- Built responsive user interfaces using React with Expo and React Native Web
+	- Implemented client-side routing with React Navigation Stack
+	- Implemented forms for user registration, login, food browsing, and order management
+	- Created a shared UI theme system with colors, spacing, typography, and shadow styling
+	- Integrated API client with runtime-configurable base URLs
+	- Implemented responsive cart management and checkout flow
+	- Deployed frontend to Vercel as web static export
 - Backend development:
-	- Developed RESTful API using Node.js and Express
-	- Implemented authentication and authorization with JWT
-	- Implemented input validation and error handling
+	- Developed complete RESTful API using Node.js and Express.js
+	- Implemented authentication and authorization with JWT tokens
+	- Implemented input validation and comprehensive error handling
+	- Implemented file upload functionality with Multer for product images and avatars
+	- Created middleware for authentication, CORS, error handling, and logging with Morgan
+	- Configured environment variables for different deployment stages
 - Database design:
-	- Designed MongoDB collections and indexed key fields
-	- Implemented relations/references for `users`, `items`, `orders`
+	- Designed MongoDB Atlas collections for users, categories, food items, orders, and payments
+	- Implemented proper data types, validation, and relationships using Mongoose ODM
+	- Added indexing for frequently queried fields (email, categoryId, userId)
+	- Implemented schema relationships with proper foreign keys
 - API development:
-	- Designed and implemented endpoints for CRUD and authentication
-	- Wrote API documentation and sample requests
+	- Designed and implemented 20+ endpoints for complete CRUD and order management
+	- Wrote comprehensive API documentation with request/response examples
+	- Implemented proper HTTP status codes and error responses
+	- Tested all endpoints for functionality and edge cases
 - Testing:
-	- Performed manual testing for major user flows (registration, login, CRUD, checkout)
-	- Fixed bugs found during testing
+	- Performed manual testing for all major user flows (registration, login, category browsing, food browsing, cart management, order creation, payment processing)
+	- Tested authentication and authorization on protected endpoints
+	- Fixed bugs found during testing and validated fixes
 - Deployment:
-	- Deployed frontend to <Frontend Hosting Service>
-	- Deployed backend to <Backend Hosting Service>
-	- Configured MongoDB Atlas and environment variables
+	- Deployed frontend to Vercel with automatic builds from GitHub
+	- Deployed backend to Render with MongoDB Atlas integration
+	- Configured CORS for cross-origin requests between frontend and backend
+	- Set up environment variables for production deployment
+	- Tested deployed application across multiple browsers and devices
 - Repository management:
-	- Maintained Git history with meaningful commits
-	- Documented setup and deployment steps in the repository README
+	- Maintained Git history with meaningful, descriptive commits
+	- Documented setup and deployment steps in README.md
+	- Organized project structure with separate frontend and backend folders
+	- Created comprehensive API documentation
+	- Added configuration files (render.yaml, .env examples)
 
 ### Declaration
-I confirm that the above list accurately reflects the work I have personally completed for this assignment. I understand that academic integrity policies apply.
+I confirm that the above list accurately reflects the work I have personally completed for this assignment. I understand that academic integrity policies apply and that this is an individual submission representing only my work.
 
 Signature: ____________________    Date: ____________________
 
@@ -428,33 +444,36 @@ Signature: ____________________    Date: ____________________
 
 ## 6) README.txt (exact template — place this text in `README.txt` inside the ZIP)
 
-GitHub Repository: <Your GitHub Repository Link>
+GitHub Repository: https://github.com/TMPatipolaarachchi/food-ordering-mobile-app
 
 Student Details:
 Student ID: <Your Student ID>
 Name: <Your Name>
 Module: SE2020
-Project Title: <Your Project Title>
+Project Title: Food Ordering Mobile Application
 
 Deployment Details:
 Frontend URL: <Your Frontend URL>
 Backend URL: <Your Backend API URL>
 
 Project Type: MERN / Full Stack Web Application
-Frontend Technology: React
+Frontend Technology: React, Expo, React Navigation
 Backend Technology: Node.js, Express.js
 Database: MongoDB Atlas
 Authentication: JWT
+File Upload: Multer
 
 Project Structure:
-- frontend/
-- backend/
+- frontend/ — React Expo web application
+- backend/ — Node.js Express API server
 
 Important Notes:
 - Source code is NOT included in the ZIP file.
 - All source code is available at the GitHub repository link above.
 - The ZIP file contains only documentation files as required by the assignment.
 - Frontend and backend are deployed separately; links are provided above.
+- Frontend is deployed to Vercel as web static export from Expo build.
+- Backend is deployed to Render with MongoDB Atlas cloud database.
 
 Final Checklist (to confirm before creating the ZIP):
 - [ ] ZIP file named `WDDS01_<YourStudentID>_Submission.zip` created
