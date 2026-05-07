@@ -35,12 +35,29 @@ const getExpoHostBaseUrl = () => {
   return normalizeApiBaseUrl(`http://${host}:5000`);
 };
 
+const isPrivateOrLocalHost = (value) => {
+  if (!value) return false;
+
+  try {
+    const host = new URL(value).hostname;
+    return (
+      host === 'localhost' ||
+      host === '127.0.0.1' ||
+      /^10\./.test(host) ||
+      /^192\.168\./.test(host) ||
+      /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)
+    );
+  } catch {
+    return false;
+  }
+};
+
 const fallbackBaseUrl =
   Platform.OS === 'android' ? 'http://10.0.2.2:5000/api' : 'http://localhost:5000/api';
 
 const expoHostBaseUrl = getExpoHostBaseUrl();
 
-const BASE_URL = (configuredBaseUrl || expoHostBaseUrl || fallbackBaseUrl).replace(/\/$/, '');
+const BASE_URL = (Platform.OS === 'web' && isPrivateOrLocalHost(configuredBaseUrl) ? fallbackBaseUrl : configuredBaseUrl || expoHostBaseUrl || fallbackBaseUrl).replace(/\/$/, '');
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
